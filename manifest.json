@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "ScreenshotGPTPlugin",
+  "version": "1.0",
+  "permissions": ["scripting", "activeTab", "tabs", "commands"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": ["<all_urls>"],
+  "commands": {
+    "take-screenshot": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y"
+      },
+      "description": "Take a screenshot and analyze it with GPT"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["libs/prism.js", "libs/prism.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
