@@ -94,7 +94,7 @@ function sendToGPT(image) {
         responseContainer.innerHTML = `<span style="color: red;">Runtime Error: ${chrome.runtime.lastError.message}</span>`;
       } else if (response && response.success) {
         console.log("GPT response:", response.reply);
-        responseContainer.innerHTML = formatSwiftCode(response.reply);
+        responseContainer.innerHTML = formatCode(response.reply);
 
         // Highlight code using Prism.js
         loadPrism().then(() => Prism.highlightAll());
@@ -106,15 +106,19 @@ function sendToGPT(image) {
   );
 }
 
-function formatSwiftCode(code) {
-  // Remove markdown code fences (```swift and ```)
-  code = code.replace(/```swift|```/g, "");
+function formatCode(code) {
+  // Extract language from code block (e.g., ```python, ```swift, etc.)
+  const match = code.match(/```(\w+)[\s\S]*?```/);
+  const language = match ? match[1] : "plaintext";
 
-  // Escape HTML special characters to ensure proper rendering
+  // Remove markdown code fences
+  code = code.replace(/```(\w+)?|```/g, "");
+
+  // Escape HTML special characters
   code = code.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
   // Wrap the code in a <pre><code> block for Prism.js syntax highlighting
-  return `<pre><code class="language-swift">${code}</code></pre>`;
+  return `<pre><code class="language-${language}">${code}</code></pre>`;
 }
 
 function loadPrism() {

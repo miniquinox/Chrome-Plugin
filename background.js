@@ -79,7 +79,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 async function analyzeImageWithGPT(imageUrl) {
-  const OPENAI_API_KEY = "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"; // Replace with your actual API key
+  const OPENAI_API_KEY = ""; // Add your API key here
 
   const requestBody = {
     model: "gpt-4o",
@@ -89,11 +89,11 @@ async function analyzeImageWithGPT(imageUrl) {
         content: [
           {
             type: "text",
-            text: `Solve the problem shown in this image and provide the simplest solution in Swift code
-            with proper formatting. You should only provide the code well commented and nothing else.
-            Focus on easy to digest code, simple and concise. 
-            This is an interview, so don't use built in functions that are usually forbidden. Follow this format: 
-            \`\`\`swift
+            text: `First find in this image the programming language selected. Then, solve the problem shown in this 
+            image and provide the simplest solution in such language with proper formatting. You should only provide 
+            the code well commented and nothing else. Focus on easy to digest code, simple and concise. This is an 
+            interview, so don't use built in functions that are usually forbidden. Follow this format for each language: 
+            \`\`\`python
             <code here>
             // Start first line with a comment explaining very concisely what the code does. 
             // Ex: make variables with let, loop through the array, check if the element is greater than 5, etc.
