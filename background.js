@@ -80,7 +80,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 async function analyzeImageWithGPT(imageUrl) {
   const OPENAI_API_KEY = ""; // Add your API key here
-
   const requestBody = {
     model: "gpt-4o",
     messages: [
@@ -89,14 +88,15 @@ async function analyzeImageWithGPT(imageUrl) {
         content: [
           {
             type: "text",
-            text: `First find in this image the programming language selected. Then, solve the problem shown in this 
-            image and provide the simplest solution in such language with proper formatting. You should only provide 
-            the code well commented and nothing else. Focus on easy to digest code, simple and concise. This is an 
-            interview, so don't use built in functions that are usually forbidden. Follow this format for each language: 
+            text: `First find in this image the programming language selected (most likely python). Then, solve the problem shown in this 
+            image and provide the simplest and shortest solution in such language with proper formatting. You should only provide 
+            the code well commented and nothing else. Write a simple, step-by-step, beginner-friendly solution that avoids shortcuts 
+            and built-in functions (often forbidden in interviews). Focus on clarity, using explicit logic, easy-to-follow code, 
+            and no overly clever tricks.. Follow this format for each language: 
             \`\`\`python
             <code here>
-            // Start first line with a comment explaining very concisely what the code does. 
-            // Ex: make variables with let, loop through the array, check if the element is greater than 5, etc.
+            // Start first line with a comment explaining very concisely what the code will do. 
+            // Ex: We will first make make a function that loops through the array and returns the sum of all elements using i++.
             \`\`\`
             `,
           },

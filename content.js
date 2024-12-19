@@ -84,27 +84,31 @@ function showFloatingWindow(image) {
 function sendToGPT(image) {
   console.log("Sending image to GPT...");
   const responseContainer = document.getElementById("gpt-response");
-  responseContainer.innerHTML = "<i>Analyzing the problem... Please wait.</i>"; // Show a loading message
+  responseContainer.innerHTML = "<i>Analyzing the problem... Please wait.</i>";
 
-  chrome.runtime.sendMessage(
-    { action: "send-to-gpt", image },
-    (response) => {
-      if (chrome.runtime.lastError) {
-        console.error("Runtime error:", chrome.runtime.lastError);
-        responseContainer.innerHTML = `<span style="color: red;">Runtime Error: ${chrome.runtime.lastError.message}</span>`;
-      } else if (response && response.success) {
-        console.log("GPT response:", response.reply);
-        responseContainer.innerHTML = formatCode(response.reply);
+  chrome.runtime.sendMessage({ action: "send-to-gpt", image }, (response) => {
+    if (chrome.runtime.lastError) {
+      console.error("Runtime error:", chrome.runtime.lastError);
+      responseContainer.innerHTML = `<span style="color: red;">Runtime Error: ${chrome.runtime.lastError.message}</span>`;
+    } else if (response && response.success) {
+      console.log("GPT response:", response.reply);
+      responseContainer.innerHTML = formatCode(response.reply);
 
-        // Highlight code using Prism.js
-        loadPrism().then(() => Prism.highlightAll());
-      } else {
-        console.error("Error in response:", response);
-        responseContainer.innerHTML = `<span style="color: red;">Error: ${response.error}</span>`;
-      }
+      // Reload Prism and re-highlight the code
+      loadPrism().then(() => {
+        const codeBlocks = responseContainer.querySelectorAll("pre code");
+        codeBlocks.forEach((block) => {
+          console.log("Highlighting code...");
+          Prism.highlightElement(block);
+        });
+      });
+    } else {
+      console.error("Error in response:", response);
+      responseContainer.innerHTML = `<span style="color: red;">Error: ${response.error}</span>`;
     }
-  );
+  });
 }
+
 
 function formatCode(code) {
   // Extract language from code block (e.g., ```python, ```swift, etc.)
@@ -123,22 +127,38 @@ function formatCode(code) {
 
 function loadPrism() {
   return new Promise((resolve) => {
-    if (document.getElementById("prism-css") || document.getElementById("prism-js")) {
-      return resolve(); // Skip if already loaded
+    // Remove existing Prism script to force reload
+    const existingScript = document.getElementById("prism-js");
+    if (existingScript) {
+      console.log("Removing old Prism script...");
+      existingScript.remove();
     }
 
-    // Load CSS
+    // Remove Prism CSS to reload styles
+    const existingCSS = document.getElementById("prism-css");
+    if (existingCSS) {
+      console.log("Removing old Prism CSS...");
+      existingCSS.remove();
+    }
+
+    // Load Prism CSS
     const css = document.createElement("link");
     css.id = "prism-css";
     css.rel = "stylesheet";
     css.href = chrome.runtime.getURL("libs/prism.css");
     document.head.appendChild(css);
 
-    // Load JS
-    const js = document.createElement("script");
-    js.id = "prism-js";
-    js.src = chrome.runtime.getURL("libs/prism.js");
-    js.onload = resolve;
-    document.head.appendChild(js);
+    // Load Prism JS dynamically
+    const script = document.createElement("script");
+    script.id = "prism-js";
+    script.src = chrome.runtime.getURL("libs/prism.js");
+    script.onload = () => {
+      console.log("Prism reloaded successfully.");
+      resolve();
+    };
+    script.onerror = () => {
+      console.error("Failed to reload Prism.js.");
+    };
+    document.head.appendChild(script);
   });
 }
