@@ -91,8 +91,9 @@ async function analyzeImageWithGPT(imageUrl) {
             text: `First find in this image the programming language selected (most likely python). Then, solve the problem shown in this 
             image and provide the simplest and shortest solution in such language with proper formatting. You should only provide 
             the code well commented and nothing else. Write a simple, step-by-step, beginner-friendly solution that avoids shortcuts 
-            and built-in functions (often forbidden in interviews). Focus on clarity, using explicit logic, easy-to-follow code, 
-            and no overly clever tricks.. Follow this format for each language: 
+            and built-in functions (often forbidden in interviews). Make sure to always follow instructions on how to write the code 
+            specifically if given. Focus on clarity, using explicit logic, easy-to-follow code, and no overly clever tricks.. 
+            Follow this format for each language: 
             \`\`\`python
             <code here>
             // Start first line with a comment explaining very concisely what the code will do. 
